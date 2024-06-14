@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link href="{{ url_for('static', filename='css/styles1.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Formulario de Iniciar Sesión -->
+        <div class="container-form">
+            <form class="sign-in" method="POST" action="{{ url_for('login') }}">
+                <h2>Iniciar Sesión</h2>
+                <div class="social-networks">
+                    <a href="https://wa.me/3001457680" target="_blank">
+                        <ion-icon name="logo-whatsapp"></ion-icon>
+                    </a>
+                    <a href="https://web.facebook.com/profile.php?id=100092427816135" target="_blank">
+                        <ion-icon name="logo-facebook"></ion-icon>
+                    </a>
+                    <a href="https://instagram.com/nowtifylogist?igshid=YmMyMTA2M2Y=" target="_blank">
+                        <ion-icon name="logo-instagram"></ion-icon>
+                    </a>
+                    <a href="https://twitter.com/NowtifyLogist" target="_blank">
+                        <ion-icon name="logo-twitter"></ion-icon>
+                    </a>
+                </div>
+                
+                <span>Use su correo y contraseña</span>
+                <div class="container-input">
+                    <ion-icon name="mail-outline"></ion-icon>
+                    <input type="email" placeholder="Email" name="correo" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
+                </div>
+                <div class="container-input">
+                    <ion-icon name="lock-closed-outline"></ion-icon>
+                    <input type="password" placeholder="Password" name="contraseña" required>
+                </div>
+                <a href="#" id="forgotPasswordLink">¿Olvidaste tu contraseña?</a>
+                <button class="button" type="submit">INICIAR SESIÓN</button>
+            </form>
+        </div>
+
+        <!-- Formulario de Registro -->
+        <div class="container-form">
+            <form class="sign-up" method="POST" action="{{ url_for('register') }}">
+                <h2>Registrarse</h2>
+                <div class="social-networks">
+                    <a href="https://wa.me/3001457680" target="_blank">
+                        <ion-icon name="logo-whatsapp"></ion-icon>
+                    </a>
+                    <a href="https://web.facebook.com/profile.php?id=100092427816135" target="_blank">
+                        <ion-icon name="logo-facebook"></ion-icon>
+                    </a>
+                    <a href="https://instagram.com/nowtifylogist?igshid=YmMyMTA2M2Y=" target="_blank">
+                        <ion-icon name="logo-instagram"></ion-icon>
+                    </a>
+                    <a href="https://twitter.com/NowtifyLogist" target="_blank">
+                        <ion-icon name="logo-twitter"></ion-icon>
+                    </a>
+                </div>
+                <span>Use su correo electrónico para registrarse</span>
+                <div class="container-input">
+                    <ion-icon name="person-outline"></ion-icon>
+                    <input type="text" placeholder="Nombre" name="nombre_usuario" required>
+                </div>
+                <div class="container-input">
+                    <ion-icon name="mail-outline"></ion-icon>
+                    <input type="text" placeholder="Email" name="correo" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
+                </div>
+                <div class="container-input">
+                    <ion-icon name="lock-closed-outline"></ion-icon>
+                    <input type="password" placeholder="Password" name="contraseña" required>
+                </div>
+                <div class="container-input">
+                    <ion-icon name="lock-closed-outline"></ion-icon>
+                    <input type="password" placeholder="Contraseña Jefe" name="jefe_contraseña" required>
+                </div>
+                <button class="button" type="submit">REGISTRARSE</button>
+            </form>
+        </div>
+
+        <!-- Bienvenido -->
+        <div class="container-welcome">
+            <div class="welcome-sign-up welcome">
+                <h3>¡Bienvenido!</h3>
+                <p>Ingrese sus datos personales para usar todas las funciones del sitio</p>
+                <button class="button" id="btn-sign-up">Registrarse</button>
+            </div>
+            <div class="welcome-sign-in welcome">
+                <h3>¡Hola!</h3>
+                <p>Regístrese con sus datos personales para usar todas las funciones del sitio</p>
+                <button class="button" id="btn-sign-in">Iniciar Sesión</button>
+            </div>
+        </div>
+
+        <!-- Modal para restablecimiento de contraseña -->
+        <div id="resetPasswordModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Solicitar Restablecimiento de Contraseña</h2>
+                <form method="post" action="{{ url_for('reset_password_request') }}">
+                    <div class="form-group">
+                        <label for="correo">Correo:</label>
+                        <input type="email" class="form-control" id="correo" name="correo" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Solicitar Restablecimiento</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal para ingresar nueva contraseña -->
+        <div id="newPasswordModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Restablecer Contraseña</h2>
+                <form method="post" action="{{ url_for('reset_password', correo=correo) }}">
+                    <div class="form-group">
+                        <label for="contraseña">Nueva Contraseña:</label>
+                        <input type="password" class="form-control" id="contraseña" name="contraseña" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Restablecer Contraseña</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal para mensajes flash -->
+        <div id="flashModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <div id="flashMessage"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const flashModal = document.getElementById("flashModal");
+            const resetPasswordModal = document.getElementById("resetPasswordModal");
+            const newPasswordModal = document.getElementById("newPasswordModal");
+            const span = document.getElementsByClassName("close");
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    let flashMessage = '';
+                    {% for category, message in messages %}
+                        flashMessage += `<div class="alert alert-{{ category }}">{{ message }}</div>`;
+                    {% endfor %}
+                    document.getElementById('flashMessage').innerHTML = flashMessage;
+                    flashModal.style.display = "block";
+                {% endif %}
+            {% endwith %}
+
+            for (let i = 0; i < span.length; i++) {
+                span[i].onclick = function() {
+                    flashModal.style.display = "none";
+                    resetPasswordModal.style.display = "none";
+                    newPasswordModal.style.display = "none";
+                }
+            }
+
+            window.onclick = function(event) {
+                if (event.target == flashModal) {
+                    flashModal.style.display = "none";
+                } else if (event.target == resetPasswordModal) {
+                    resetPasswordModal.style.display = "none";
+                } else if (event.target == newPasswordModal) {
+                    newPasswordModal.style.display = "none";
+                }
+            }
+
+            document.getElementById("forgotPasswordLink").onclick = function() {
+                resetPasswordModal.style.display = "block";
+            }
+
+            {% if show_reset_password_modal %}
+                newPasswordModal.style.display = "block";
+            {% endif %}
+        });
+    </script>
+</body>
+</html>

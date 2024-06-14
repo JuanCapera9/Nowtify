@@ -1,0 +1,5 @@
+body {
+    background-color: #c5d0d4;
+    background-size: cover; /* Para cubrir toda el área */
+    background-repeat: no-repeat; /* Para evitar que la imagen se repita */
+}

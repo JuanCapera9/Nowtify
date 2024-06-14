@@ -1,0 +1,132 @@
+{% extends './layoutInventario.html' %}
+
+{% block body %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h3>Ingreso de nuevos inventarios</h3>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        {% if category == 'warning' %}
+                            <div class="alert alert-warning" role="alert">
+                                {{ message }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            <form action="{{ url_for('add_inventario') }}" method="post">
+                <div class="form-group">
+                    <label for="cantidad">Cantidad</label>
+                    <input type="number" name="cantidad" id="cantidad" class="form-control" placeholder="Ingrese la cantidad" required>
+                </div>
+                <div class="form-group">
+                    <label for="estado">Estado</label>
+                    <input type="text" name="estado" id="estado" class="form-control" placeholder="Ingrese el estado" required>
+                </div>
+                <div class="form-group">
+                    <label for="fecha_adquisicion">Fecha de Adquisición</label>
+                    <input type="datetime-local" class="form-control" id="fecha_adquisicion" name="fecha_adquisicion" required>
+                </div>
+                <div class="form-group">
+                    <label for="notas">Notas</label>
+                    <input type="text" name="notas" id="notas" class="form-control" placeholder="Ingrese notas">
+                </div>
+                <div class="form-group">
+                    <label for="referencia">Referencia</label>
+                    <select id="referencia" name="referencia" class="form-control" required>
+                        <option value="" selected disabled>Seleccionar referencia</option>
+                        {% for producto in producto %}
+                            <option value="{{ producto[0] }}">{{ producto[1] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Agregar inventario</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <h1>Tabla de Inventario</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Cantidad</th>
+                <th>Estado</th>
+                <th>Fecha de Adquisición</th>
+                <th>Notas</th>
+                <th>Referencia</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in inventario %}
+            <tr>
+                <td>{{ item[0] }}</td>
+                <td>{{ item[1] }}</td>
+                <td>{{ item[2] }}</td>
+                <td>{{ item[3].strftime('%Y-%m-%dT%H:%M') }}</td>
+                <td>{{ item[4] }}</td>
+                <td>{{ item[5] }}</td>
+                <td>
+                    <button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#editarInventarioModal{{ item[0] }}">
+                        <i class="fas fa-pencil-alt"></i> Editar
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% for item in inventario %}
+    <!-- Ventana Modal para Editar Inventario -->
+    <div class="modal fade" id="editarInventarioModal{{ item[0] }}" tabindex="-1" role="dialog" aria-labelledby="editarInventarioModal{{ item[0] }}Label" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editarInventarioModal{{ item[0] }}Label">Editar Inventario</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ url_for('update_inventario', id_inventario=item[0]) }}" method="POST">
+                        <div class="form-group">
+                            <label for="cantidad">Cantidad</label>
+                            <input type="number" class="form-control" id="cantidad" name="cantidad" value="{{ item[1] }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="estado">Estado</label>
+                            <input type="text" class="form-control" id="estado" name="estado" value="{{ item[2] }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="fecha_adquisicion">Fecha de Adquisición</label>
+                            <input type="datetime-local" class="form-control" id="fecha_adquisicion" name="fecha_adquisicion" value="{{ item[3].strftime('%Y-%m-%dT%H:%M') }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="notas">Notas</label>
+                            <input type="text" class="form-control" id="notas" name="notas" value="{{ item[4] }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="referencia">Referencia</label>
+                            <select id="referencia_{{ item[0] }}" name="referencia" class="form-control" required>
+                                <option value="" selected disabled>Seleccionar referencia</option>
+                                {% for producto in producto %}
+                                    <option value="{{ producto[0] }}" {% if item[5] == producto[0] %}selected{% endif %}>{{ producto[1] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>                    
+                        <button type="submit" class="btn btn-primary">Actualizar Inventario</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+
+{% endblock %}

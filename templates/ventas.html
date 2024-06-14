@@ -1,0 +1,112 @@
+{% extends './layoutVentas.html' %}
+
+{% block body %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h3>Ingreso de nuevas ventas</h3>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        {% if category == 'warning' %}
+                            <div class="alert alert-warning" role="alert">
+                                {{ message }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            <form action="{{ url_for('add_venta') }}" method="post">
+                <div class="form-group">
+                    <label for="fecha_venta">Fecha de Venta</label>
+                    <input type="datetime-local" class="form-control" id="fecha_venta" name="fecha_venta" required>
+                </div>
+                <div class="form-group">
+                    <label for="total">Total</label>
+                    <input type="number" step="0.01" class="form-control" id="total" name="total" placeholder="Ingrese el total" required>
+                </div>
+                <div class="form-group">
+                    <label for="id_cliente">Nombre Cliente</label>
+                    <select id="id_cliente" name="id_cliente" class="form-control" required>
+                        <option value="" selected disabled>Seleccionar cliente</option>
+                        {% for cliente_item in cliente %}
+                            <option value="{{ cliente_item[0] }}">{{ cliente_item[1] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Agregar venta</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <h1>Tabla de Ventas</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Fecha de Venta</th>
+                <th>Total</th>
+                <th>Nombre Cliente</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for venta in ventas %}
+            <tr>
+                <td>{{ venta[0] }}</td>
+                <td>{{ venta[1].strftime('%Y-%m-%dT%H:%M') }}</td>
+                <td>{{ venta[2] }}</td>
+                <td>{{ venta[3] }}</td>
+                <td>
+                    <button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#editarVentaModal{{ venta[0] }}">
+                        <i class="fas fa-pencil-alt"></i> Editar
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% for venta in ventas %}
+<!-- Ventana Modal para Editar Venta -->
+<div class="modal fade" id="editarVentaModal{{ venta[0] }}" tabindex="-1" role="dialog" aria-labelledby="editarVentaModal{{ venta[0] }}Label" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editarVentaModal{{ venta[0] }}Label">Editar Venta</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ url_for('update_venta', id_venta=venta[0]) }}" method="POST">
+                    <div class="form-group">
+                        <label for="fecha_venta">Fecha de Venta</label>
+                        <input type="datetime-local" class="form-control" id="fecha_venta" name="fecha_venta" value="{{ venta[1].strftime('%Y-%m-%dT%H:%M') }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="total">Total</label>
+                        <input type="number" step="0.01" class="form-control" id="total" name="total" value="{{ venta[2] }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_cliente">Nombre Cliente</label>
+                        <select id="id_cliente" name="id_cliente" class="form-control" required>
+                            <option value="" disabled>Seleccionar cliente</option>
+                            {% for cliente_item in cliente %}
+                                <option value="{{ cliente_item[0] }}" {% if venta[3] == cliente_item[0] %}selected{% endif %}>{{ cliente_item[1] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Actualizar Venta</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% endblock %}

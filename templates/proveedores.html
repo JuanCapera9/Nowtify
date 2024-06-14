@@ -1,0 +1,153 @@
+{% extends './layout.html' %}
+
+{% block body %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h3>Ingreso de nuevos proveedores</h3>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        {% if category == 'warning' %}
+                            <div class="alert alert-warning" role="alert">
+                                {{ message }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            <form action="{{ url_for('add_proveedor') }}" method="post">
+                <div class="form-group">
+                    <label for="nombre">Nombre</label>
+                    <input type="text" name="nombre" id="nombre" class="form-control" placeholder="Ingrese nombre del proveedor" required>
+                </div>
+                <div class="form-group">
+                    <label for="apellido">Apellido</label>
+                    <input type="text" name="apellido" id="apellido" class="form-control" placeholder="Ingrese apellido del proveedor" required>
+                </div>
+                <div class="form-group">
+                    <label for="ciudad">Ciudad</label>
+                    <input type="text" name="ciudad" id="ciudad" class="form-control" placeholder="Ingrese ciudad del proveedor" required>
+                </div>
+                <div class="form-group">
+                    <label for="contacto">Contacto</label>
+                    <input type="text" name="contacto" id="contacto" class="form-control" placeholder="Ingrese contacto del proveedor" required>
+                </div>
+                <div class="form-group">
+                    <label for="direccion">Dirección</label>
+                    <input type="text" name="direccion" id="direccion" class="form-control" placeholder="Ingrese dirección del proveedor" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" name="email" id="email" class="form-control" placeholder="Ingrese email del proveedor" required>
+                </div>
+                <div class="form-group">
+                    <label for="pais">País</label>
+                    <input type="text" name="pais" id="pais" class="form-control" placeholder="Ingrese país del proveedor" required>
+                </div>
+                <div class="form-group">
+                    <label for="telefono">Teléfono</label>
+                    <input type="text" name="telefono" id="telefono" class="form-control" placeholder="Ingrese teléfono del proveedor" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Agregar proveedor</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <h1>Tabla de Proveedores</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Ciudad</th>
+                <th>Contacto</th>
+                <th>Dirección</th>
+                <th>Email</th>
+                <th>País</th>
+                <th>Teléfono</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for proveedor in proveedores %}
+            <tr>
+                <td>{{ proveedor[0] }}</td>
+                <td>{{ proveedor[6] }}</td>
+                <td>{{ proveedor[1] }}</td>
+                <td>{{ proveedor[2] }}</td>
+                <td>{{ proveedor[3] }}</td>
+                <td>{{ proveedor[4] }}</td>
+                <td>{{ proveedor[5] }}</td>
+                <td>{{ proveedor[7] }}</td>
+                <td>{{ proveedor[8] }}</td>
+                <td>
+                    <!-- Botón para abrir la ventana modal -->
+                    <button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#editarProveedorModal{{ proveedor[0] }}">
+                        <i class="fas fa-pencil-alt"></i> Editar
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% for proveedor in proveedores %}
+<!-- Ventana Modal para Editar Proveedor -->
+<div class="modal fade" id="editarProveedorModal{{ proveedor[0] }}" tabindex="-1" role="dialog" aria-labelledby="editarProveedorModal{{ proveedor[0] }}Label" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editarProveedorModal{{ proveedor[0] }}Label">Editar Proveedor</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ url_for('update_proveedor', id_proveedor=proveedor[0]) }}" method="POST">
+                    <div class="form-group">
+                        <label for="nombre">Nombre</label>
+                        <input type="text" class="form-control" id="nombre" name="nombre" value="{{ proveedor[6] }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="apellido">Apellido</label>
+                        <input type="text" class="form-control" id="apellido" name="apellido" value="{{ proveedor[1] }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="ciudad">Ciudad</label>
+                        <input type="text" class="form-control" id="ciudad" name="ciudad" value="{{ proveedor[2] }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="contacto">Contacto</label>
+                        <input type="text" class="form-control" id="contacto" name="contacto" value="{{ proveedor[3] }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="direccion">Dirección</label>
+                        <input type="text" class="form-control" id="direccion" name="direccion" value="{{ proveedor[4] }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" value="{{ proveedor[5] }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="pais">País</label>
+                        <input type="text" class="form-control" id="pais" name="pais" value="{{ proveedor[7] }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="telefono">Teléfono</label>
+                        <input type="text" class="form-control" id="telefono" name="telefono" value="{{ proveedor[8] }}" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Actualizar Proveedor</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% endblock %}

@@ -1,0 +1,176 @@
+{% extends './layoutInventario.html' %}
+
+{% block body %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h3>Registro de Productos</h3>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        {% if category == 'warning' %}
+                            <div class="alert alert-warning" role="alert">
+                                {{ message }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            <form action="{{ url_for('add_productos') }}" method="post">
+                <div class="form-group">
+                    <label for="referencia">Referencia</label>
+                    <input type="text" class="form-control" id="referencia" name="referencia" required>
+                </div>
+                <div class="form-group">
+                    <label for="cantidad">Cantidad</label>
+                    <input type="number" class="form-control" id="cantidad" name="cantidad" required>
+                </div>
+                <div class="form-group">
+                    <label for="descripcion">Descripción</label>
+                    <input type="text" class="form-control" id="descripcion" name="descripcion">
+                </div>
+                <div class="form-group">
+                    <label for="diametro">Diámetro</label>
+                    <input type="number" class="form-control" id="diametro" name="diametro">
+                </div>
+                <div class="form-group">
+                    <label for="largo">Largo</label>
+                    <input type="number" class="form-control" id="largo" name="largo">
+                </div>
+                <div class="form-group">
+                    <label for="medida">Medida</label>
+                    <input type="number" class="form-control" id="medida" name="medida">
+                </div>
+                <div class="form-group">
+                    <label for="precio">Precio</label>
+                    <input type="number" step="0.01" class="form-control" id="precio" name="precio" required>
+                </div>
+                <div class="form-group">
+                    <label for="categoria">Categoría</label>
+                    <select id="categoria" name="categoria" class="form-control" required>
+                        <option value="" selected disabled>Seleccionar categoría</option>
+                        {% for categoria in categorias %}
+                            <option value="{{ categoria[0] }}">{{ categoria[1] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="proveedor">Proveedor</label>
+                    <select id="proveedor" name="proveedor" class="form-control" required>
+                        <option value="" selected disabled>Seleccionar proveedor</option>
+                        {% for proveedor in proveedores %}
+                            <option value="{{ proveedor[0] }}">{{ proveedor[1] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Agregar Producto</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <h1>Tabla de Productos</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Referencia</th>
+                <th>Cantidad</th>
+                <th>Descripción</th>
+                <th>Diámetro</th>
+                <th>Largo</th>
+                <th>Medida</th>
+                <th>Precio</th>
+                <th>Categoría</th>
+                <th>Proveedor</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for producto in productos %}
+                <tr>
+                    <td>{{ producto[0] }}</td>
+                    <td>{{ producto[1] }}</td>
+                    <td>{{ producto[2] }}</td>
+                    <td>{{ producto[3] }}</td>
+                    <td>{{ producto[4] }}</td>
+                    <td>{{ producto[5] }}</td>
+                    <td>{{ producto[6] }}</td>
+                    <td>{{ producto[7] }}</td>
+                    <td>{{ producto[8] }}</td>
+                    <td>
+                        <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#editarProductoModal{{ producto[0] }}">
+                            <i class="fas fa-edit"></i> Editar
+                        </button>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% for producto in productos %}
+    <!-- Ventana Modal para Editar Producto -->
+    <div class="modal fade" id="editarProductoModal{{ producto[0] }}" tabindex="-1" role="dialog" aria-labelledby="editarProductoModal{{ producto[0] }}Label" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editarProductoModal{{ producto[0] }}Label">Editar Producto</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ url_for('update_producto', referencia=producto[0]) }}" method="POST">
+                        <div class="form-group">
+                            <label for="cantidad">Cantidad</label>
+                            <input type="number" class="form-control" id="cantidad" name="cantidad" value="{{ producto[1] }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="descripcion">Descripción</label>
+                            <input type="text" class="form-control" id="descripcion" name="descripcion" value="{{ producto[2] }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="diametro">Diámetro</label>
+                            <input type="number" class="form-control" id="diametro" name="diametro" value="{{ producto[3] }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="largo">Largo</label>
+                            <input type="number" class="form-control" id="largo" name="largo" value="{{ producto[4] }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="medida">Medida</label>
+                            <input type="number" class="form-control" id="medida" name="medida" value="{{ producto[5] }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="precio">Precio</label>
+                            <input type="number" step="0.01" class="form-control" id="precio" name="precio" value="{{ producto[6] }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="categoria">Categoría</label>
+                            <select id="categoria" name="categoria" class="form-control" required>
+                                <option value="" selected disabled>Seleccionar categoría</option>
+                                {% for categoria in categorias %}
+                                    <option value="{{ categoria[0] }}" {% if producto[7] == categoria[0] %}selected{% endif %}>{{ categoria[1] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="proveedor">Proveedor</label>
+                            <select id="proveedor" name="proveedor" class="form-control" required>
+                                <option value="" selected disabled>Seleccionar proveedor</option>
+                                {% for proveedor in proveedores %}
+                                    <option value="{{ proveedor[0] }}" {% if producto[8] == proveedor[0] %}selected{% endif %}>{{ proveedor[1] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Actualizar Producto</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+
+{% endblock %}

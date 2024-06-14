@@ -1,0 +1,43 @@
+{% extends './layoutVentas.html' %}
+
+{% block body %}
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <h2>Bienvenido al Dashboard de Administración</h2>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card text-white bg-danger mb-3" style="max-width: 18rem;">
+                <div class="card-header">Clientes</div>
+                <div class="card-body">
+                    <h5 class="card-title">Gestión de Clientes</h5>
+                    <p class="card-text">Administra los clientes de la tienda.</p>
+                    <a href="{{ url_for('clientes') }}" class="btn btn-light">Ir a Clientes</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-black bg-light mb-3" style="max-width: 18rem;">
+                <div class="card-header">Ventas</div>
+                <div class="card-body">
+                    <h5 class="card-title">Gestión de Ventas</h5>
+                    <p class="card-text">Administra las ventas realizadas.</p>
+                    <a href="{{ url_for('ventas') }}" class="btn btn-dark">Ir a Ventas</a>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+{% endblock %}

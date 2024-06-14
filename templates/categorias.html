@@ -1,0 +1,115 @@
+{% extends './layout.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Categoría</title>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Editar Categoría</h1>
+        <form action="{{ url_for('update_categoria', id=categoria[0]) }}" method="POST">
+            <div class="form-group">
+                <label for="descripcion">Descripción</label>
+                <input type="text" class="form-control" id="descripcion" name="descripcion" value="{{ categoria[1] }}" required>
+            </div>
+            <div class="form-group">
+                <label for="nombre">Nombre</label>
+                <input type="text" class="form-control" id="nombre" name="nombre" value="{{ categoria[2] }}" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Actualizar Categoría</button>
+        </form>
+    </div>    
+</body> 
+</html>
+
+{% block body %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h3>Ingreso de nuevas categorías</h3>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        {% if category == 'warning' %}
+                            <div class="alert alert-warning" role="alert">
+                                {{ message }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            <form action="{{ url_for('add_categoria') }}" method="post">
+                <div class="form-group">
+                    <label for="descripcion">Descripción</label>
+                    <input type="text" name="descripcion" id="descripcion" class="form-control" placeholder="Ingrese descripción de la categoría" required>
+                </div>
+                <div class="form-group">
+                    <label for="nombre">Nombre</label>
+                    <input type="text" name="nombre" id="nombre" class="form-control" placeholder="Ingrese nombre de la categoría" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Agregar categoría</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <h1>Tabla de Categorías</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Descripción</th>
+                <th>Nombre</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for categoria in categorias %}
+            <tr>
+                <td>{{ categoria[0] }}</td>
+                <td>{{ categoria[1] }}</td>
+                <td>{{ categoria[2] }}</td>
+                <td>
+                    <button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#editarCategoriaModal{{ categoria[0] }}">
+                        <i class="fas fa-pencil-alt"></i> Editar
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% for categoria in categorias %}
+<!-- Ventana Modal para Editar Categoría -->
+<div class="modal fade" id="editarCategoriaModal{{ categoria[0] }}" tabindex="-1" role="dialog" aria-labelledby="editarCategoriaModal{{ categoria[0] }}Label" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editarCategoriaModal{{ categoria[0] }}Label">Editar Categoría</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ url_for('update_categoria', id=categoria[0]) }}" method="post">
+                    <div class="form-group">
+                        <label for="descripcion">Descripción</label>
+                        <input type="text" class="form-control" id="descripcion" name="descripcion" value="{{ categoria[1] }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="nombre">Nombre</label>
+                        <input type="text" class="form-control" id="nombre" name="nombre" value="{{ categoria[2] }}" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Actualizar Categoría</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}

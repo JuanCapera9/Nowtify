@@ -1,0 +1,156 @@
+{% extends './layout.html' %}
+
+{% block body %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h3>Ingreso de nuevos usuarios</h3>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            {% if category == 'success' %}
+            <div class="alert alert-success" role="alert">
+                {{ message }}
+            </div>
+            {% elif category == 'warning' %}
+            <div class="alert alert-warning" role="alert">
+                {{ message }}
+            </div>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+            <form action="{{ url_for('add_usuario') }}" method="post">
+                <div class="form-group">
+                    <label for="correo">Correo</label>
+                    <input type="email" name="correo" id="correo" class="form-control"
+                        placeholder="Ingrese correo del usuario" required>
+                </div>
+                <div class="form-group">
+                    <label for="nombre_usuario">Nombre de Usuario</label>
+                    <input type="text" name="nombre_usuario" id="nombre_usuario" class="form-control"
+                        placeholder="Ingrese nombre de usuario" required>
+                </div>
+                <div class="form-group">
+                    <label for="contraseña">Contraseña</label>
+                    <input type="password" name="contraseña" id="contraseña" class="form-control"
+                        placeholder="Ingrese contraseña" required>
+                </div>
+                <div class="form-group">
+                    <label for="id_estado_usuario">Estado Usuario</label>
+                    <select id="id_estado_usuario" name="id_estado_usuario" class="form-control" required>
+                        <option value="" selected disabled>Seleccionar estado</option>
+                        {% for estado in estado_usuarios %}
+                        <option value="{{ estado[0] }}">{{ estado[1] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="id_rol">Rol</label>
+                    <select id="id_rol" name="id_rol" class="form-control" required>
+                        <option value="" selected disabled>Seleccionar rol</option>
+                        {% for rol in roles %}
+                        <option value="{{ rol[0] }}">{{ rol[1] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Agregar usuario</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <h1>Tabla de Usuarios</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Correo</th>
+                <th>Nombre de Usuario</th>
+                <th>Contraseña</th>
+                <th>Fecha de Registro</th>
+                <th>Estado Usuario</th>
+                <th>Rol</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for usuario in usuarios %}
+            <tr>
+                <td>{{ usuario[0] }}</td>
+                <td>{{ usuario[1] }}</td>
+                <td>{{ usuario[2] }}</td>
+                <td>{{ usuario[3] }}</td>
+                <td>{{ usuario[4] }}</td>
+                <td>{{ usuario[5] }}</td>
+                <td>{{ usuario[6] }}</td>
+                <td>
+                    <button type="button" class="btn btn-sm btn-warning" data-toggle="modal"
+                        data-target="#editarUsuarioModal{{ usuario[0] }}">
+                        <i class="fas fa-pencil-alt"></i> Editar
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% for usuario in usuarios %}
+<!-- Ventana Modal para Editar Usuario -->
+<div class="modal fade" id="editarUsuarioModal{{ usuario[0] }}" tabindex="-1" role="dialog"
+    aria-labelledby="editarUsuarioModal{{ usuario[0] }}Label" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editarUsuarioModal{{ usuario[0] }}Label">Editar Usuario</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ url_for('update_usuario', id_usuario=usuario[0]) }}" method="POST">
+                    <div class="form-group">
+                        <label for="correo">Correo</label>
+                        <input type="email" class="form-control" id="correo" name="correo" value="{{ usuario[1] }}"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label for="nombre_usuario">Nombre de Usuario</label>
+                        <input type="text" class="form-control" id="nombre_usuario" name="nombre_usuario"
+                            value="{{ usuario[2] }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="contraseña">Contraseña</label>
+                        <input type="password" class="form-control" id="contraseña" name="contraseña"
+                            value="{{ usuario[3] }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_estado_usuario">Estado Usuario</label>
+                        <select id="id_estado_usuario" name="id_estado_usuario" class="form-control" required>
+                            {% for estado in estado_usuarios %}
+                            <option value="{{ estado[0] }}" {% if usuario[5]==estado[0] %}selected{% endif %}>{{
+                                estado[1] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_rol">Rol</label>
+                        <select id="id_rol" name="id_rol" class="form-control" required>
+                            {% for rol in roles %}
+                            <option value="{{ rol[0] }}" {% if usuario[6]==rol[0] %}selected{% endif %}>{{ rol[1] }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Actualizar Usuario</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% endblock %}

@@ -1,0 +1,146 @@
+{% extends './layout.html' %}
+
+{% block body %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h3>Ingreso de nuevos empleados</h3>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        {% if category == 'warning' %}
+                            <div class="alert alert-warning" role="alert">
+                                {{ message }}
+                            </div>
+                        {% elif category == 'success' %}
+                            <div class="alert alert-success" role="alert">
+                                {{ message }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            <form action="{{ url_for('add_empleado') }}" method="post">
+                <div class="form-group">
+                    <label for="nombres">Nombres</label>
+                    <input type="text" name="nombres" id="nombres" class="form-control" placeholder="Ingrese nombres del empleado" required>
+                </div>
+                <div class="form-group">
+                    <label for="apellidos">Apellidos</label>
+                    <input type="text" name="apellidos" id="apellidos" class="form-control" placeholder="Ingrese apellidos del empleado" required>
+                </div>
+                <div class="form-group">
+                    <label for="documento">Documento</label>
+                    <input type="text" name="documento" id="documento" class="form-control" placeholder="Ingrese documento del empleado" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" name="email" id="email" class="form-control" placeholder="Ingrese email del empleado" required>
+                </div>
+                <div class="form-group">
+                    <label for="telefono">Teléfono</label>
+                    <input type="text" name="telefono" id="telefono" class="form-control" placeholder="Ingrese teléfono del empleado" required>
+                </div>
+                <div class="form-group">
+                    <label for="cargo">Cargo</label>
+                    <select name="cargo" id="cargo" class="form-control" required>
+                        <option value="" selected disabled>Seleccione el cargo</option>
+                        {% for cargo in cargos %}
+                            <option value="{{ cargo[0] }}">{{ cargo[1] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Agregar empleado</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <h1>Tabla de Empleados</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombres</th>
+                <th>Apellidos</th>
+                <th>Documento</th>
+                <th>Email</th>
+                <th>Teléfono</th>
+                <th>Cargo</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for empleado in empleados %}
+            <tr>
+                <td>{{ empleado[0] }}</td>
+                <td>{{ empleado[1] }}</td>
+                <td>{{ empleado[2] }}</td>
+                <td>{{ empleado[3] }}</td>
+                <td>{{ empleado[4] }}</td>
+                <td>{{ empleado[5] }}</td>
+                <td>{{ empleado[6] }}</td>
+                <td>
+                    <!-- Botón para abrir la ventana modal -->
+                    <button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#editarEmpleadoModal{{ empleado[0] }}">
+                        <i class="fas fa-pencil-alt"></i> Editar
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% for empleado in empleados %}
+<!-- Ventana Modal para Editar Empleado -->
+<div class="modal fade" id="editarEmpleadoModal{{ empleado[0] }}" tabindex="-1" role="dialog" aria-labelledby="editarEmpleadoModal{{ empleado[0] }}Label" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editarEmpleadoModal{{ empleado[0] }}Label">Editar Empleado</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ url_for('update_empleado', id_empleado=empleado[0]) }}" method="POST">
+                    <div class="form-group">
+                        <label for="nombres">Nombres</label>
+                        <input type="text" class="form-control" id="nombres" name="nombres" value="{{ empleado[1] }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="apellidos">Apellidos</label>
+                        <input type="text" class="form-control" id="apellidos" name="apellidos" value="{{ empleado[2] }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="documento">Documento</label>
+                        <input type="text" class="form-control" id="documento" name="documento" value="{{ empleado[3] }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" value="{{ empleado[4] }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="telefono">Teléfono</label>
+                        <input type="text" class="form-control" id="telefono" name="telefono" value="{{ empleado[5] }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cargo">Cargo</label>
+                        <select name="cargo" id="cargo" class="form-control" required>
+                            {% for cargo in cargos %}
+                                <option value="{{ cargo[0] }}" {% if cargo[0] == empleado[6] %}selected{% endif %}>{{ cargo[1] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>                    
+                    <button type="submit" class="btn btn-primary">Actualizar Empleado</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% endblock %}
